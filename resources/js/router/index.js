@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 
-import HomePage from "../views/HomePage.vue";
+import ProjectsPage from "../views/ProjectsPage.vue";
 import LoginPage from "../views/LoginPage.vue";
 import RegisterPage from "../views/RegisterPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: HomePage, meta: { requiresAuth: true } },
+    { path: "/", component: ProjectsPage, meta: { requiresAuth: true } },
     { path: "/login", component: LoginPage },
     { path: "/register", component: RegisterPage },
   ],
