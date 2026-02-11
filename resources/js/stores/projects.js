@@ -6,17 +6,25 @@ export const useProjectsStore = defineStore("projects", {
     items: [],
     loading: false,
     error: null,
+    meta: null,
+    links: null,
   }),
 
   actions: {
-    async fetchAll() {
+    async fetchAll(url = "/api/v1/projects") {
       const auth = useAuthStore();
       this.loading = true;
       this.error = null;
 
       try {
-        const res = await auth.client().get("/api/v1/projects");
-        this.items = res.data.data;
+        const res = await auth.client().get(url);
+
+        // Supports both:
+        // 1) { data: [...] }
+        // 2) Laravel paginator: { data: [...], meta: {...}, links: {...} }
+        this.items = Array.isArray(res.data.data) ? res.data.data : [];
+        this.meta = res.data.meta ?? null;
+        this.links = res.data.links ?? null;
       } catch (e) {
         this.error = e?.response?.data?.message ?? "Failed to load projects";
         throw e;
@@ -32,6 +40,9 @@ export const useProjectsStore = defineStore("projects", {
 
       try {
         const res = await auth.client().post("/api/v1/projects", payload);
+
+        // If pagination is enabled, best UX is to prepend locally
+        // (alternatively you can re-fetch the first page)
         this.items.unshift(res.data.data);
       } catch (e) {
         this.error = e?.response?.data?.message ?? "Failed to create project";

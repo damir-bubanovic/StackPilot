@@ -16,8 +16,6 @@ This roadmap breaks development into clear chapters.
 
 ---
 
-## 📌 To-Do Chapters
-
 ### Chapter 2 — Requirements & System Design
 - Define StackPilot product goals
 - Define user roles (Guest, User, Admin)
@@ -102,6 +100,8 @@ Each feature:
 - Docs
 
 ---
+
+## 📌 To-Do Chapters
 
 ### Chapter 9 — Testing & CI
 - Feature tests

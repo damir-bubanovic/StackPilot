@@ -10,22 +10,46 @@
           class="border p-2 rounded"
           placeholder="Project name"
           required
+          :disabled="projects.loading"
         />
-        <button class="bg-black text-white px-4 py-2 rounded">
-          Create Project
+
+        <button
+          class="bg-black text-white px-4 py-2 rounded disabled:opacity-60"
+          :disabled="projects.loading"
+        >
+          {{ projects.loading ? "Working..." : "Create Project" }}
         </button>
+
+        <p v-if="projects.error" class="text-sm text-red-600">
+          {{ projects.error }}
+        </p>
       </form>
+    </div>
+
+    <!-- Projects list states -->
+    <div v-if="projects.loading" class="text-sm text-gray-600">
+      Loading projects...
+    </div>
+
+    <div v-else-if="projects.items.length === 0" class="text-sm text-gray-600">
+      No projects yet. Create one above.
     </div>
 
     <!-- Projects -->
     <div
+      v-else
       v-for="p in projects.items"
       :key="p.id"
       class="bg-white border rounded p-6"
     >
       <div class="flex justify-between items-center">
         <h2 class="font-semibold">{{ p.name }}</h2>
-        <button class="border px-3 py-1 rounded" @click="deleteProject(p.id)">
+
+        <button
+          class="border px-3 py-1 rounded disabled:opacity-60"
+          :disabled="projects.loading"
+          @click="deleteProject(p.id)"
+        >
           Delete
         </button>
       </div>
@@ -35,7 +59,8 @@
         <input
           v-model="taskTitleByProject[p.id]"
           placeholder="New task..."
-          class="border p-2 w-full mb-2"
+          class="border p-2 w-full mb-2 disabled:opacity-60"
+          :disabled="tasks.loading"
           @focus="ensureTasksLoaded(p.id)"
           @keyup.enter="addTask(p.id)"
         />
@@ -61,16 +86,18 @@
           </label>
 
           <button
+            class="text-sm text-red-600 disabled:opacity-60"
+            :disabled="tasks.loading"
             @click="deleteTask(p.id, t.id)"
-            class="text-sm text-red-600"
             title="Delete task"
           >
             x
           </button>
         </div>
 
+        <!-- Only show "No tasks yet" AFTER tasks have been loaded for this project -->
         <div
-          v-if="(tasks.byProject[p.id] || []).length === 0"
+          v-if="tasks.byProject[p.id] && (tasks.byProject[p.id].length === 0)"
           class="text-sm text-gray-600"
         >
           No tasks yet.
@@ -100,7 +127,10 @@ onMounted(async () => {
 });
 
 async function createProject() {
-  await projects.create({ name: name.value });
+  const trimmed = name.value.trim();
+  if (!trimmed) return;
+
+  await projects.create({ name: trimmed });
   name.value = "";
 }
 
@@ -108,7 +138,7 @@ async function deleteProject(id) {
   if (!confirm("Delete this project?")) return;
 
   await projects.remove(id);
-  delete tasks.byProject[id]; // clear tasks cache for that project
+  delete tasks.byProject[id];
   delete taskTitleByProject.value[id];
 }
 
