@@ -1,74 +1,40 @@
 <template>
   <div class="space-y-6">
+    <!-- Create Project -->
     <div class="bg-white border rounded p-6">
       <h1 class="text-xl font-semibold">Projects</h1>
-      <p class="mt-1 text-gray-600 text-sm">Create and manage your projects.</p>
 
       <form class="mt-4 grid gap-3" @submit.prevent="createProject">
-        <input
-          v-model="name"
-          class="border rounded px-3 py-2"
-          placeholder="Project name"
-          required
-        />
-        <textarea
-          v-model="description"
-          class="border rounded px-3 py-2"
-          placeholder="Description (optional)"
-          rows="3"
-        ></textarea>
-
-        <button
-          class="bg-black text-white px-4 py-2 rounded disabled:opacity-60"
-          :disabled="projects.loading"
-        >
-          {{ projects.loading ? "Creating..." : "Create Project" }}
-        </button>
-
-        <p v-if="projects.error" class="text-sm text-red-600">
-          {{ projects.error }}
-        </p>
+        <input v-model="name" class="border p-2 rounded" placeholder="Project name" required />
+        <button class="bg-black text-white px-4 py-2 rounded">Create Project</button>
       </form>
     </div>
 
-    <div class="bg-white border rounded p-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold">Your Projects</h2>
-        <button class="border px-3 py-1.5 rounded" @click="reload">
-          Refresh
-        </button>
+    <!-- Projects -->
+    <div v-for="p in projects.items" :key="p.id" class="bg-white border rounded p-6">
+      <div class="flex justify-between items-center">
+        <h2 class="font-semibold">{{ p.name }}</h2>
+        <button class="border px-3 py-1 rounded" @click="deleteProject(p.id)">Delete</button>
       </div>
 
-      <div v-if="projects.loading" class="mt-4 text-sm text-gray-600">
-        Loading...
-      </div>
+      <!-- Tasks -->
+      <div class="mt-4">
+        <input
+          v-model="taskTitle"
+          placeholder="New task..."
+          class="border p-2 w-full mb-2"
+          @keyup.enter="addTask(p.id)"
+        />
 
-      <div v-else class="mt-4 space-y-3">
-        <div
-          v-for="p in projects.items"
-          :key="p.id"
-          class="border rounded p-4 flex items-start justify-between"
-        >
-          <div>
-            <div class="font-semibold">{{ p.name }}</div>
-            <div v-if="p.description" class="text-sm text-gray-600 mt-1">
-              {{ p.description }}
-            </div>
-            <div class="text-xs text-gray-500 mt-2">
-              Created: {{ formatDate(p.created_at) }}
-            </div>
-          </div>
+        <div v-for="t in tasks.items" :key="t.id" class="flex justify-between py-1">
+          <label>
+            <input type="checkbox" :checked="t.status === 'done'" @change="toggleTask(t)" />
+            <span :class="{ 'line-through text-gray-400': t.status === 'done' }">
+              {{ t.title }}
+            </span>
+          </label>
 
-          <button
-            class="border px-3 py-1.5 rounded text-sm hover:bg-gray-50"
-            @click="deleteProject(p.id)"
-          >
-            Delete
-          </button>
-        </div>
-
-        <div v-if="projects.items.length === 0" class="text-sm text-gray-600">
-          No projects yet.
+          <button @click="deleteTask(t.id)" class="text-sm text-red-600">x</button>
         </div>
       </div>
     </div>
@@ -76,35 +42,40 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useProjectsStore } from "../stores/projects";
+import { useTasksStore } from "../stores/tasks";
 
 const projects = useProjectsStore();
+const tasks = useTasksStore();
 
 const name = ref("");
-const description = ref("");
+const taskTitle = ref("");
 
 onMounted(async () => {
   await projects.fetchAll();
 });
 
-async function reload() {
-  await projects.fetchAll();
-}
-
 async function createProject() {
-  await projects.create({ name: name.value, description: description.value });
+  await projects.create({ name: name.value });
   name.value = "";
-  description.value = "";
 }
 
 async function deleteProject(id) {
-  if (!confirm("Delete this project?")) return;
   await projects.remove(id);
 }
 
-function formatDate(iso) {
-  if (!iso) return "";
-  return new Date(iso).toLocaleString();
+async function addTask(projectId) {
+  await tasks.fetch(projectId);
+  await tasks.create(taskTitle.value);
+  taskTitle.value = "";
+}
+
+async function toggleTask(task) {
+  await tasks.toggle(task);
+}
+
+async function deleteTask(id) {
+  await tasks.remove(id);
 }
 </script>
