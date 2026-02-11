@@ -2,19 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class DatabaseSeeder extends Seeder
+class DemoSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Create demo user
-        User::query()->updateOrCreate(
+        $user = User::query()->updateOrCreate(
             ['email' => 'demo@stackpilot.test'],
             [
                 'name' => 'Demo User',
@@ -22,9 +20,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Run demo project/task data
-        $this->call([
-            DemoSeeder::class,
-        ]);
+        $projects = Project::factory()
+            ->count(3)
+            ->for($user)
+            ->create();
+
+        foreach ($projects as $project) {
+            Task::factory()->count(8)->for($project)->create();
+        }
     }
 }
