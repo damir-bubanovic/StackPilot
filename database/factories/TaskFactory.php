@@ -3,21 +3,33 @@
 namespace Database\Factories;
 
 use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Task>
+ * @extends Factory<Task>
  */
 class TaskFactory extends Factory
 {
+    protected $model = Task::class;
+
     public function definition(): array
     {
         return [
             'project_id' => Project::factory(),
+
             'title' => $this->faker->sentence(4),
-            'description' => $this->faker->optional()->paragraph(),
-            'status' => $this->faker->randomElement(['todo', 'doing', 'done']),
-            'due_date' => $this->faker->optional()->dateTimeBetween('now', '+30 days')?->format('Y-m-d'),
+
+            // Keep descriptions short for test payloads
+            'description' => $this->faker->optional()->sentence(),
+
+            // Default to todo so toggle tests are deterministic
+            'status' => 'todo',
+
+            'due_date' => $this->faker
+                ->optional()
+                ->dateTimeBetween('now', '+1 month')
+                ?->format('Y-m-d'),
         ];
     }
 }

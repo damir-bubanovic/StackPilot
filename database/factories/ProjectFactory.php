@@ -2,20 +2,26 @@
 
 namespace Database\Factories;
 
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Project>
+ * @extends Factory<Project>
  */
 class ProjectFactory extends Factory
 {
+    protected $model = Project::class;
+
     public function definition(): array
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->sentence(3),
-            'description' => $this->faker->optional()->paragraph(),
+
+            // words(3, true) produces more natural project names than sentence()
+            'name' => $this->faker->words(3, true),
+
+            'description' => $this->faker->optional()->sentence(),
         ];
     }
 }
