@@ -101,8 +101,6 @@ Each feature:
 
 ---
 
-## 📌 To-Do Chapters
-
 ### Chapter 9 — Testing & CI
 - Feature tests
 - Policies tests
@@ -112,6 +110,8 @@ Each feature:
   - Frontend build
 
 ---
+
+## 📌 To-Do Chapters
 
 ### Chapter 10 — Documentation
 - README upgrade
