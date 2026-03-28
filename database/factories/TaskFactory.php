@@ -20,16 +20,13 @@ class TaskFactory extends Factory
 
             'title' => $this->faker->sentence(4),
 
-            // Keep descriptions short for test payloads
-            'description' => $this->faker->optional()->sentence(),
+            'description' => $this->faker->sentence(),
 
-            // Default to todo so toggle tests are deterministic
-            'status' => 'todo',
+            'status' => $this->faker->randomElement(['todo', 'doing', 'done']),
 
             'due_date' => $this->faker
-                ->optional()
                 ->dateTimeBetween('now', '+1 month')
-                ?->format('Y-m-d'),
+                ->format('Y-m-d'),
         ];
     }
 }

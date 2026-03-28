@@ -4,47 +4,67 @@
 
 # StackPilot
 
-**StackPilot** is a full-stack Laravel + Vue 3 project management demo application focused on clean UI, secure REST APIs, and modern SPA architecture.
+**StackPilot** is a full-stack Laravel + Vue 3 project management application focused on clean UI, secure REST APIs, and modern SPA architecture.
 
-It showcases authentication, authorization policies, project/task workflows, and a polished dashboard-style interface.
+It demonstrates real-world patterns including authentication, authorization, state management, and a structured project/task workflow with a polished dashboard interface.
 
 ---
 
-## Features
+## 🚀 Features
 
-- User authentication (register, login, logout)
-- Token-based auth with Laravel Sanctum
-- Project creation and management
-- Task management per project (add, toggle, delete)
+### Authentication & Security
+- User registration, login, logout
+- Token-based authentication with Laravel Sanctum
 - Authorization policies (user-owned resources)
-- Clean, modern dark UI (Tailwind CSS)
+- Protected API routes
+
+### Projects
+- Create and delete projects
+- Project descriptions
+- User-scoped project access
+
+### Tasks
+- Create tasks per project with:
+  - title
+  - description
+  - status (`todo`, `doing`, `done`)
+  - due date
+- Toggle task status (cycle: todo → doing → done)
+- Delete tasks
+- Tasks grouped per project
+
+### UI / UX
+- Clean dark dashboard UI (Tailwind CSS)
+- Collapsible task details panel
+- Status badges (Todo / Doing / Done)
+- Due date display
+- Loading and empty states
+- Inline creation forms (no page reloads)
+
+### Architecture
 - Vue 3 SPA with Pinia state management
-- RESTful API architecture
-- Pagination and loading states
-- Docker-based local development (Laravel Sail)
+- RESTful Laravel API with Resources
+- Optimistic UI updates
+- Modular store structure
+
+### Development
+- Docker-based local environment (Laravel Sail)
+- Seeded demo data
+- Pagination-ready API structure
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
-- **Backend:** Laravel (API-first), Sanctum, Eloquent ORM  
+- **Backend:** Laravel, Sanctum, Eloquent ORM  
 - **Frontend:** Vue 3, Vue Router, Pinia, Tailwind CSS, Vite  
 - **Database:** MySQL  
 - **Dev Environment:** Docker (Laravel Sail)  
-- **Tools:** DBeaver, Composer, npm  
+- **Tools:** Composer, npm, DBeaver  
 
 ---
 
-## Prerequisites
-
-- Docker & Docker Compose  
-- Git  
-- Node.js (v18+)  
-- npm  
-
----
-
-## Installation
+## 📦 Installation
 
 ```bash
 # Clone repository
@@ -63,7 +83,7 @@ cp .env.example .env
 # Generate application key
 ./vendor/bin/sail artisan key:generate
 
-# Run migrations + seed demo user
+# Run migrations + seed demo data
 ./vendor/bin/sail artisan migrate:fresh --seed
 
 # Install frontend dependencies
@@ -71,106 +91,3 @@ cp .env.example .env
 
 # Start Vite dev server
 ./vendor/bin/sail npm run dev
-```
-
-Open:
-
-```
-http://localhost
-```
-
----
-
-## Demo Credentials
-
-Email:
-
-```
-demo@stackpilot.test
-```
-
-Password:
-
-```
-password
-```
-
----
-
-## API Base URL
-
-```
-/api/v1
-```
-
-Example endpoints:
-
-- POST `/api/v1/auth/login`
-- GET `/api/v1/projects`
-- POST `/api/v1/projects/{project}/tasks`
-
----
-
-## Folder Structure
-
-```
-app/
-  Http/
-    Controllers/
-    Resources/
-  Policies/
-resources/
-  js/
-public/
-  images/
-database/
-routes/
-tests/
-```
-
----
-
-## Development Notes
-
-- Frontend handled via **Vite**
-- Styling with **Tailwind CSS**
-- Database inspection via **DBeaver**
-- Containers managed with **Laravel Sail**
-- Feature tests + policies included
-- CI ready (Pint + PHPUnit)
-
----
-
-## Production Build (Local Simulation)
-
-```bash
-./vendor/bin/sail artisan optimize
-./vendor/bin/sail npm run build
-```
-
-Update `.env`:
-
-```
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://your-domain.com
-```
-
----
-
-## Creator
-
-**Damir Bubanović**
-
-- https://damirbubanovic.com  
-- https://github.com/damir-bubanovic  
-- https://www.youtube.com/@damirbubanovic6608  
-- https://stackoverflow.com/users/11778242/damir-bubanovic  
-- mailto:damir.bubanovic@yahoo.com  
-
----
-
-## Acknowledgments
-
-- Built with **Laravel**, **Vue 3**, **Tailwind CSS**, and **Vite**
-- Local development powered by **Docker & Laravel Sail**

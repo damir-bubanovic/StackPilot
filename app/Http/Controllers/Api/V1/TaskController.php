@@ -28,7 +28,13 @@ class TaskController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
+            'status' => ['nullable', 'in:todo,doing,done'],
+            'due_date' => ['nullable', 'date'],
         ]);
+
+        // defaults if not provided
+        $data['status'] = $data['status'] ?? 'todo';
+        $data['due_date'] = $data['due_date'] ?? null;
 
         $task = $project->tasks()->create($data);
 
@@ -41,8 +47,15 @@ class TaskController extends Controller
     {
         $this->authorize('update', $task);
 
+        // simple cycle: todo → doing → done → todo
+        $nextStatus = match ($task->status) {
+            'todo' => 'doing',
+            'doing' => 'done',
+            default => 'todo',
+        };
+
         $task->update([
-            'status' => $task->status === 'done' ? 'todo' : 'done',
+            'status' => $nextStatus,
         ]);
 
         return response()->json([

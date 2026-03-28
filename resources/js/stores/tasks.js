@@ -19,7 +19,9 @@ export const useTasksStore = defineStore("tasks", {
           .client()
           .get(`/api/v1/projects/${projectId}/tasks`);
 
-        this.byProject[projectId] = res.data.data;
+        this.byProject[projectId] = Array.isArray(res.data.data)
+          ? res.data.data
+          : [];
       } catch (e) {
         this.error = e?.response?.data?.message ?? "Failed to load tasks";
         throw e;
@@ -28,23 +30,41 @@ export const useTasksStore = defineStore("tasks", {
       }
     },
 
-    async create(projectId, title) {
+    async create(projectId, payload) {
       const auth = useAuthStore();
       this.error = null;
 
       try {
-        // ensure array exists
         if (!this.byProject[projectId]) {
           this.byProject[projectId] = [];
         }
 
+        const body =
+          typeof payload === "string"
+            ? {
+                title: payload,
+                description: "",
+                status: "todo",
+                due_date: null,
+              }
+            : {
+                title: payload?.title ?? "",
+                description: payload?.description ?? "",
+                status: payload?.status ?? "todo",
+                due_date: payload?.due_date ?? null,
+              };
+
         const res = await auth
           .client()
-          .post(`/api/v1/projects/${projectId}/tasks`, { title });
+          .post(`/api/v1/projects/${projectId}/tasks`, body);
 
         this.byProject[projectId].unshift(res.data.data);
       } catch (e) {
-        this.error = e?.response?.data?.message ?? "Failed to create task";
+        this.error =
+          e?.response?.data?.message ??
+          (e?.response?.status === 422
+            ? "Task validation failed"
+            : "Failed to create task");
         throw e;
       }
     },

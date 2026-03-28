@@ -39,13 +39,25 @@ export const useProjectsStore = defineStore("projects", {
       this.error = null;
 
       try {
-        const res = await auth.client().post("/api/v1/projects", payload);
+        const body =
+          typeof payload === "string"
+            ? { name: payload, description: "" }
+            : {
+                name: payload?.name ?? "",
+                description: payload?.description ?? "",
+              };
+
+        const res = await auth.client().post("/api/v1/projects", body);
 
         // If pagination is enabled, best UX is to prepend locally
         // (alternatively you can re-fetch the first page)
         this.items.unshift(res.data.data);
       } catch (e) {
-        this.error = e?.response?.data?.message ?? "Failed to create project";
+        this.error =
+          e?.response?.data?.message ??
+          (e?.response?.status === 422
+            ? "Project validation failed"
+            : "Failed to create project");
         throw e;
       } finally {
         this.loading = false;
