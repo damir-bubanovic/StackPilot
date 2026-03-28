@@ -67,27 +67,115 @@ It demonstrates real-world patterns including authentication, authorization, sta
 ## 📦 Installation
 
 ```bash
-# Clone repository
 git clone https://github.com/damir-bubanovic/StackPilot.git
 cd StackPilot
 
-# Copy environment file
 cp .env.example .env
 
-# Start containers
 ./vendor/bin/sail up -d
-
-# Install backend dependencies
 ./vendor/bin/sail composer install
-
-# Generate application key
 ./vendor/bin/sail artisan key:generate
-
-# Run migrations + seed demo data
 ./vendor/bin/sail artisan migrate:fresh --seed
 
-# Install frontend dependencies
 ./vendor/bin/sail npm install
-
-# Start Vite dev server
 ./vendor/bin/sail npm run dev
+```
+
+Open in browser:
+http://localhost
+
+---
+
+## 🔐 Demo Credentials
+
+Email: demo@stackpilot.test  
+Password: password  
+
+---
+
+## 🔗 API Base URL
+
+/api/v1
+
+### Example Endpoints
+
+- POST /api/v1/auth/login
+- GET /api/v1/projects
+- POST /api/v1/projects
+- POST /api/v1/projects/{project}/tasks
+- PATCH /api/v1/tasks/{task}
+
+---
+
+## 📁 Folder Structure
+
+app/
+  Http/
+    Controllers/
+    Resources/
+  Models/
+  Policies/
+
+resources/
+  js/
+    views/
+    stores/
+
+database/
+  migrations/
+  factories/
+  seeders/
+
+routes/
+tests/
+public/
+  images/
+
+---
+
+## 🧪 Development Notes
+
+- Frontend powered by Vite
+- State management via Pinia
+- Styling with Tailwind CSS
+- Containers managed with Laravel Sail
+- Database inspection via DBeaver
+- API responses structured with Laravel Resources
+
+---
+
+## ⚙️ Production Build
+
+```bash
+./vendor/bin/sail artisan optimize
+./vendor/bin/sail npm run build
+```
+
+.env:
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+---
+
+## 📌 Current Status
+
+- Authentication complete  
+- Projects + Tasks fully functional  
+- Status system implemented  
+- Due dates supported  
+- UI/UX baseline complete  
+- Ready for deployment  
+
+---
+
+## 👤 Creator
+
+Damir Bubanović  
+https://github.com/damir-bubanovic  
+
+---
+
+## 🙌 Acknowledgments
+
+Built with Laravel, Vue 3, Tailwind CSS, and Vite.
